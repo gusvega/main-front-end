@@ -34,3 +34,21 @@ jobs:
       run: docker tag guxvega/front-end:dev mainautomationcr.azurecr.io/front-end:dev
     - name: Push the docker image to Azure Container Registry
       run: docker push mainautomationcr.azurecr.io/front-end:dev
+# Set the target Azure Kubernetes Service (AKS) cluster. 
+    - name: Set Target AKS Cluster
+    - uses: azure/aks-set-context@v1
+      with:
+        creds: '${{ secrets.AZURE_CREDENTIALS }}'
+        cluster-name: ${{ env.CLUSTER_NAME }}
+        resource-group: ${{ env.CLUSTER_RESOURCE_GROUP }}
+    # Create namespace if doesn't exist
+    - run: |
+        kubectl create namespace ${{ env.NAMESPACE }} --dry-run -o json | kubectl apply -f -
+    # Create imagepullsecret for Azure Container registry (ACR)
+    - uses: azure/k8s-create-secret@v1
+      with:
+        container-registry-url: mainautomationcr..azurecr.io
+        container-registry-username: ${{ secrets.ACR_USERNAME }}
+        container-registry-password: ${{ secrets.ACR_PASSWORD }}
+        secret-name: mainautomationcr-registry-connection
+        namespace: ${{ env.NAMESPACE }}
