@@ -42,7 +42,7 @@ jobs:
       # Create namespace if doesn't exist
       - name: Create Namespace if It Does not exists
         run: |
-          kubectl create namespace DEV --dry-run -o json | kubectl apply -f -
+          kubectl create namespace dev --dry-run -o json | kubectl apply -f -
       # Create imagepullsecret for Azure Container registry (ACR)
       - name: Create Image Pull
         uses: azure/k8s-create-secret@v1
