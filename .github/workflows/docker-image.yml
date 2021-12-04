@@ -37,7 +37,7 @@ jobs:
         uses: azure/aks-set-context@v1
         with:
           creds: "${{ secrets.AZURE_CREDENTIALS }}"
-          cluster-name: ${{ env.CLUSTER_NAME }}
+          cluster-name: MAIN_AKS
           resource-group: MAIN-AUTOMATION
       # Create namespace if doesn't exist
       - name: Create Namespace if It Does not exists
