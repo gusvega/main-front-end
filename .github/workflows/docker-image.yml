@@ -2,53 +2,51 @@ name: Docker Image CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag guxvega/front-end:dev
-    - name: Login to Docker Hub
-      uses: docker/login-action@v1
-      with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
-    - name: Push the docker image to Docker hub
-      run: docker push guxvega/front-end:dev
-    - name: Login to Azure Container Registry
-      uses: azure/docker-login@v1
-      with:
-        login-server: mainautomationcr.azurecr.io
-        username: ${{ secrets.ACR_USERNAME }}
-        password: ${{ secrets.ACR_PASSWORD }}
-        # hello
-    - name: Tag Image for ACR
-      run: docker tag guxvega/front-end:dev mainautomationcr.azurecr.io/front-end:dev
-    - name: Push the docker image to Azure Container Registry
-      run: docker push mainautomationcr.azurecr.io/front-end:dev
-# Set the target Azure Kubernetes Service (AKS) cluster. 
-    - name: Set Target AKS Cluster
-    - uses: azure/aks-set-context@v1
-      with:
-        creds: '${{ secrets.AZURE_CREDENTIALS }}'
-        cluster-name: ${{ env.CLUSTER_NAME }}
-        resource-group: ${{ env.CLUSTER_RESOURCE_GROUP }}
-    # Create namespace if doesn't exist
-    - run: |
-        kubectl create namespace ${{ env.NAMESPACE }} --dry-run -o json | kubectl apply -f -
-    # Create imagepullsecret for Azure Container registry (ACR)
-    - uses: azure/k8s-create-secret@v1
-      with:
-        container-registry-url: mainautomationcr..azurecr.io
-        container-registry-username: ${{ secrets.ACR_USERNAME }}
-        container-registry-password: ${{ secrets.ACR_PASSWORD }}
-        secret-name: mainautomationcr-registry-connection
-        namespace: ${{ env.NAMESPACE }}
+      - uses: actions/checkout@v2
+      - name: Build the Docker image
+        run: docker build . --file Dockerfile --tag guxvega/front-end:dev
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Push the docker image to Docker hub
+        run: docker push guxvega/front-end:dev
+      - name: Login to Azure Container Registry
+        uses: azure/docker-login@v1
+        with:
+          login-server: mainautomationcr.azurecr.io
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+          # hello
+      - name: Tag Image for ACR
+        run: docker tag guxvega/front-end:dev mainautomationcr.azurecr.io/front-end:dev
+      - name: Push the docker image to Azure Container Registry
+        run: docker push mainautomationcr.azurecr.io/front-end:dev
+      # Set the target Azure Kubernetes Service (AKS) cluster.
+      - name: Set Target AKS Cluster
+      - uses: azure/aks-set-context@v1
+        with:
+          creds: "${{ secrets.AZURE_CREDENTIALS }}"
+          cluster-name: ${{ env.CLUSTER_NAME }}
+          resource-group: ${{ env.CLUSTER_RESOURCE_GROUP }}
+      # Create namespace if doesn't exist
+      - run: |
+          kubectl create namespace ${{ env.NAMESPACE }} --dry-run -o json | kubectl apply -f -
+      # Create imagepullsecret for Azure Container registry (ACR)
+      - uses: azure/k8s-create-secret@v1
+        with:
+          container-registry-url: mainautomationcr..azurecr.io
+          container-registry-username: ${{ secrets.ACR_USERNAME }}
+          container-registry-password: ${{ secrets.ACR_PASSWORD }}
+          secret-name: mainautomationcr-registry-connection
+          namespace: ${{ env.NAMESPACE }}
