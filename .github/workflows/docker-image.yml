@@ -17,4 +17,4 @@ jobs:
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag guxvega/front-end:dev
     - name: Push the docker image
-      run: docker push guxvega/front-end:dev$(date +%s)
+      run: docker push guxvega/front-end:dev
