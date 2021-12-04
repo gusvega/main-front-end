@@ -29,6 +29,7 @@ jobs:
         login-server: mainautomationcr.azurecr.io
         username: ${{ secrets.ACR_USERNAME }}
         password: ${{ secrets.ACR_PASSWORD }}
+        # hello
     - name: Tag Image for ACR
       run: docker tag guxvega/front-end:dev mainautomationcr.azurecr.io/front-end:dev
     - name: Push the docker image to Azure Container Registry
